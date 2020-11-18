@@ -5,24 +5,19 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "start-watch": "nodemon index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ComicScrip/express-contact.git"
+    "url": "git+https://github.com/ComicScrip/comments-api.git"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/ComicScrip/express-contact/issues"
+    "url": "https://github.com/ComicScrip/comments-api/issues"
   },
-  "homepage": "https://github.com/ComicScrip/express-contact#readme",
+  "homepage": "https://github.com/ComicScrip/comments-api#readme",
   "dependencies": {
-    "cors": "^2.8.5",
-    "dotenv": "^8.2.0",
-    "express": "^4.17.1",
-    "nodemon": "^2.0.6",
-    "uniqid": "^5.2.0"
+    "express": "^4.17.1"
   }
 }
