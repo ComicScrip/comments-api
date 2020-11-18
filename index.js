@@ -14,6 +14,11 @@ app.get('/comments', (req, res) => {
 });
 
 app.post('/comments', (req, res) => {
+  if (process.env.API_KEY !== req.query.apiKey) {
+    res.status(401);
+    res.json({ error: 'wrong api key !!!!' });
+  }
+
   const { message, author, rating } = req.body;
   const ratingNum = parseInt(rating, 10);
 
