@@ -1,7 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
-const nodemailer = require('nodemailer');
+const uniqid = require('uniqid');
 
 const PORT = process.env.PORT || 5000;
 
@@ -9,43 +9,36 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-const transporter = nodemailer.createTransport({
-  service: 'gmail',
-  auth: {
-    user: process.env.GMAIL_ACCOUNT,
-    pass: process.env.GMAIL_PASS,
-  },
+const comments = [];
+
+app.get('/comments', (req, res) => {
+  return res.json(comments);
 });
 
-app.post('/contact', (req, res) => {
-  const { name, email, message } = req.body;
-  const { apiKey } = req.query;
-
-  if (apiKey !== process.env.API_KEY) {
+app.post('/comments', (req, res) => {
+  if (req.query.apiKey !== process.env.API_KEY) {
     res.status(401);
-    res.json({ error: 'wrong API key' });
+    return res.json({ error: 'wrong api key' });
   }
 
-  const mailOptions = {
-    from: process.env.GMAIL_ACCOUNT,
-    to: process.env.GMAIL_ACCOUNT,
-    subject: `Demande de contact de ${name}`,
-    text: `${name} (${email}) vous a fait une demande de contact : \n\n${message}`,
-  };
+  const { rating = '', message, author } = req.body;
+  const ratingNum = parseInt(rating, 10);
+  if (isNaN(ratingNum)) {
+    res.status(422);
+    return res.json({ error: 'rating is not a number' });
+  }
+  if (!message) {
+    res.status(422);
+    return res.json({ error: 'message is empty' });
+  }
+  if (!author) {
+    res.status(422);
+    return res.json({ error: 'author is empty' });
+  }
 
-  transporter.sendMail(mailOptions, function (error, info) {
-    if (error) {
-      console.error(error);
-      res.status(500);
-      res.json({
-        errorMessage:
-          'There was a problem while sending the contact request email to the admin',
-      });
-    } else {
-      console.log('Email sent: ' + info.response);
-      res.json({ message: 'demande de contact envoyée avec succès' });
-    }
-  });
+  const newComment = { message, author, rating: ratingNum, id: uniqid() };
+  comments.push(newComment);
+  return res.json(newComment);
 });
 
 app.listen(PORT, () => {
